@@ -6,7 +6,7 @@ const express = require('express')
 const router = express.Router()
 
 const _ = require('lodash')
-const brotli = require('iltorb')
+const brotli = require('brotli')
 const accepts = require('accepts')
 const mime = require('mime-types')
 const basicAuth = require('basic-auth')

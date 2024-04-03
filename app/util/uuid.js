@@ -1,5 +1,5 @@
-const uuidv4 = require('uuid/v4')
+const { uuid } = require('uuidv4')
 
 module.exports = () => {
-  return uuidv4()
+  return uuid()
 }

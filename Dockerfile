@@ -1,10 +1,10 @@
-FROM node:8.9.4-alpine AS builder
+FROM node:lts-alpine AS builder
 
 WORKDIR /app
 COPY package*.json ./
 RUN npm i --production
 
-FROM node:8.9.4-alpine
+FROM node:lts-alpine
 WORKDIR /app
 
 COPY --from=builder /app/node_modules ./node_modules

@@ -3,7 +3,6 @@ const config = require('config')
 
 const logger = require('pino')({
   base: null,
-  prettyPrint: true,
   level: _.get(config, 'logger.level')
 })
 
