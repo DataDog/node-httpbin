@@ -5,6 +5,8 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const config = require('config')
+const https = require('https')
+const fs = require('fs')
 const logger = require('app/logger')
 const partialResponse = require('express-partial-response')
 
@@ -33,5 +35,17 @@ const server = app.listen(config.port, () => {
   const address = server.address()
   logger.info(`listen ${address.address}:${address.port}`)
 })
+
+// HTTPS server
+const httpsOptions = {
+  key: fs.readFileSync(process.env.HTTPS_KEY_FILE),
+  cert: fs.readFileSync(process.env.HTTPS_CERT_FILE)
+};
+
+const httpsServer = https.createServer(httpsOptions, app)
+httpsServer.listen(config.tls_port, () => {
+  const address = httpsServer.address()
+  logger.info(`listen ${address.address}:${address.port}`)
+});
 
 module.exports = app

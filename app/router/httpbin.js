@@ -216,10 +216,10 @@ router.all('/status/:code', (req, res) => {
 
   const isValidCode = !!http.STATUS_CODES[code]
   if (!isValidCode) {
-    return res.status(400).end(`invalid statuc code: ${code}`)
+    return res.status(400).end(`invalid status code: ${code}`)
   }
 
-  res.status(code).json({
+  res.status(parseInt(code, 10)).json({
     code,
     message: http.STATUS_CODES[code]
   })
@@ -228,8 +228,8 @@ router.all('/status/:code', (req, res) => {
 router.all('/response-headers', (req, res) => {
   const query = req.ctx.query
 
-  for (let key in query) {
-    let val = query[key]
+  for (const key in query) {
+    const val = query[key]
     res.setHeader(key, `${val}`)
   }
 
