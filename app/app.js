@@ -1,3 +1,6 @@
+// This line must come before importing any instrumented module.
+const tracer = require('dd-trace').init();
+
 const path = require('path')
 require('app-module-path').addPath(path.resolve(__dirname, '..'))
 
