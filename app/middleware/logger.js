@@ -7,7 +7,6 @@ function loggerWithTracer(tracer) {
 
     if (req.hasOwnProperty("spdyStream")) {
       req.on('close', onResFinishedSPDY(tracer, startTimeNano))
-      res.on('error', onResFinishedSPDY(tracer, startTimeNano))
     } else {
       res.on('finish', onResFinishedExpress(tracer, startTimeNano))
       res.on('error', onResFinishedExpress(tracer, startTimeNano))
@@ -32,7 +31,6 @@ function onResFinishedExpress(tracer, startTimeNano) {
 function onResFinishedSPDY(tracer, startTimeNano) {
   return function onResFinished (err) {
     this.removeListener('close', onResFinishedSPDY(tracer, startTimeNano))
-    this.removeListener('error', onResFinishedSPDY(tracer, startTimeNano))
 
     commonImplementation(this.ctx.req, this.ctx.res, err, tracer, startTimeNano, "2")
   }
@@ -40,12 +38,11 @@ function onResFinishedSPDY(tracer, startTimeNano) {
 
 function commonImplementation(req, res, err, tracer, startTimeNano, httpVersion) {
   const responseTimeNano = process.hrtime.bigint() - startTimeNano
-  let tags = [`resource_name:${req.method}_${req.route.path}`, `http.version:http/${httpVersion}`]
+  let tags = {"resource_name":`${req.method}_${req.url}`, "http.version":`http/${httpVersion}`}
   if (req.connection.encrypted !== undefined) {
-    tags.push("tls.library:node")
+    tags["tls.library"] = "nodejs"
   }
-  console.log(tags)
-  tracer.dogstatsd.histogram("node_httpbin.timer", responseTimeNano / 1000000000n, tags, 1)
+  tracer.dogstatsd.histogram("node_httpbin.timer", responseTimeNano / 1000000000n, tags)
 
   const info = {
     method: req.method,
