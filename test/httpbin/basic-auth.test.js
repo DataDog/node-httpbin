@@ -5,7 +5,7 @@ const constants = require('app/constants')
 
 describe('/basic-auth', () => {
   it('ok', async function () {
-    let res = await request(app)
+    const res = await request(app)
       .get('/basic-auth/user/pass')
       .set(constants.HTTPHeaderAuthorization, 'Basic dXNlcjpwYXNz')
     assert.equal(res.statusCode, 200)
@@ -14,7 +14,7 @@ describe('/basic-auth', () => {
   })
 
   it('fail', async function () {
-    let res = await request(app)
+    const res = await request(app)
       .get('/basic-auth/user/pass')
       .set(constants.HTTPHeaderAuthorization, 'Basic aXNlcjpwYXNz')
     assert.equal(res.statusCode, 401)
@@ -24,7 +24,7 @@ describe('/basic-auth', () => {
 
 describe('/hidden-basic-auth', () => {
   it('ok', async function () {
-    let res = await request(app)
+    const res = await request(app)
       .get('/hidden-basic-auth/user/pass')
       .set(constants.HTTPHeaderAuthorization, 'Basic dXNlcjpwYXNz')
     assert.equal(res.statusCode, 200)
@@ -33,7 +33,7 @@ describe('/hidden-basic-auth', () => {
   })
 
   it('fail', async function () {
-    let res = await request(app)
+    const res = await request(app)
       .get('/hidden-basic-auth/user/pass')
       .set(constants.HTTPHeaderAuthorization, 'Basic aXNlcjpwYXNz')
     assert.equal(res.statusCode, 404)

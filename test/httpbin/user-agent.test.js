@@ -4,7 +4,7 @@ const app = require('app/app')
 
 describe('/user-agent', () => {
   it('default', async function () {
-    let res = await request(app)
+    const res = await request(app)
       .get('/user-agent')
       .set('user-agent', 'test ua')
     assert.equal(res.statusCode, 200)

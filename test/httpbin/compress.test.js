@@ -6,7 +6,7 @@ const constants = require('app/constants')
 
 describe('compress', () => {
   it('/gzip', async function () {
-    let res = await request(app).get('/gzip')
+    const res = await request(app).get('/gzip')
     assert.equal(res.statusCode, 200)
     assert.equal(res.header[constants.HTTPHeaderContentType.toLowerCase()], mime.types.json)
     assert.equal(res.header[constants.HTTPHeaderContentEncoding.toLowerCase()], 'gzip')
@@ -15,7 +15,7 @@ describe('compress', () => {
   })
 
   it.skip('/brotli', async function () {
-    let res = await request(app).get('/brotli')
+    const res = await request(app).get('/brotli')
     assert.equal(res.statusCode, 200)
     assert.equal(res.header[constants.HTTPHeaderContentType.toLowerCase()], mime.types.json)
     assert.equal(res.header[constants.HTTPHeaderContentEncoding.toLowerCase()], 'br')
@@ -23,7 +23,7 @@ describe('compress', () => {
   })
 
   it('/deflate', async function () {
-    let res = await request(app).get('/deflate')
+    const res = await request(app).get('/deflate')
     assert.equal(res.statusCode, 200)
     assert.equal(res.header[constants.HTTPHeaderContentType.toLowerCase()], mime.types.json)
     assert.equal(res.header[constants.HTTPHeaderContentEncoding.toLowerCase()], 'deflate')

@@ -1,5 +1,5 @@
 // This line must come before importing any instrumented module.
-const tracer = require('dd-trace').init();
+const tracer = require('dd-trace').init()
 
 const path = require('path')
 require('app-module-path').addPath(path.resolve(__dirname, '..'))
@@ -42,16 +42,18 @@ const server = app.listen(config.port, () => {
 })
 
 // HTTPS server
-const httpsOptions = {
-  key: fs.readFileSync(process.env.HTTPS_KEY_FILE),
-  cert: fs.readFileSync(process.env.HTTPS_CERT_FILE)
-};
+if (process.env.HTTPS_KEY_FILE && process.env.HTTPS_CERT_FILE) {
+  const httpsOptions = {
+    key: fs.readFileSync(process.env.HTTPS_KEY_FILE),
+    cert: fs.readFileSync(process.env.HTTPS_CERT_FILE)
+  }
 
-const httpsServer = https.createServer(httpsOptions, app)
-httpsServer.listen(config.tls_port, () => {
-  const address = httpsServer.address()
-  logger.info(`listen ${address.address}:${address.port}`)
-});
+  const httpsServer = https.createServer(httpsOptions, app)
+  httpsServer.listen(config.tls_port, () => {
+    const address = httpsServer.address()
+    logger.info(`listen ${address.address}:${address.port}`)
+  })
+}
 
 // HTTP2
 const http2Options = {
@@ -66,31 +68,33 @@ const http2Options = {
     'x-forwarded-for': true
   }
 }
-const http2Server = spdy.createServer(http2Options, app);
+const http2Server = spdy.createServer(http2Options, app)
 http2Server.listen(config.http2_port, () => {
   const address = http2Server.address()
   logger.info(`listen ${address.address}:${address.port}`)
-});
+})
 
-const http2TLSOptions = {
-  key: fs.readFileSync(process.env.HTTPS_KEY_FILE),
-  cert: fs.readFileSync(process.env.HTTPS_CERT_FILE),
-  spdy: {
-    protocols: ['h2'],
-    plain: false,
-    ssl: true,
-    // **optional**
-    // Parse first incoming X_FORWARDED_FOR frame and put it to the
-    // headers of every request.
-    // NOTE: Use with care! This should not be used without some proxy that
-    // will *always* send X_FORWARDED_FOR
-    'x-forwarded-for': true
+if (process.env.HTTPS_KEY_FILE && process.env.HTTPS_CERT_FILE) {
+  const http2TLSOptions = {
+    key: fs.readFileSync(process.env.HTTPS_KEY_FILE),
+    cert: fs.readFileSync(process.env.HTTPS_CERT_FILE),
+    spdy: {
+      protocols: ['h2'],
+      plain: false,
+      ssl: true,
+      // **optional**
+      // Parse first incoming X_FORWARDED_FOR frame and put it to the
+      // headers of every request.
+      // NOTE: Use with care! This should not be used without some proxy that
+      // will *always* send X_FORWARDED_FOR
+      'x-forwarded-for': true
+    }
   }
+  const http2TLSServer = spdy.createServer(http2TLSOptions, app)
+  http2TLSServer.listen(config.http2_tls_port, () => {
+    const address = http2TLSServer.address()
+    logger.info(`listen ${address.address}:${address.port}`)
+  })
 }
-const http2TLSServer = spdy.createServer(http2TLSOptions, app);
-http2TLSServer.listen(config.http2_tls_port, () => {
-  const address = http2TLSServer.address()
-  logger.info(`listen ${address.address}:${address.port}`)
-});
 
 module.exports = app

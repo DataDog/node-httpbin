@@ -22,9 +22,9 @@ const corsOptionsDelegate = function (req, callback) {
         return cb(null, false)
       }
 
-      for (let pattern of config.cors) {
+      for (const pattern of config.cors) {
         try {
-          let regex = new RegExp(pattern, 'i')
+          const regex = new RegExp(pattern, 'i')
           if (regex.test(origin)) {
             return cb(null, true)
           }

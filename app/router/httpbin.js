@@ -119,7 +119,7 @@ router.delete('/delete', function (req, res) {
   })
 })
 
-router.all('/anything/:anything?', function (req, res) {
+const anythingHandler = function (req, res) {
   res.json({
     args: req.ctx.query,
     data: req.ctx.text,
@@ -131,10 +131,13 @@ router.all('/anything/:anything?', function (req, res) {
     origin: req.ctx.ip,
     url: req.ctx.url
   })
-})
+}
+
+router.all('/anything', anythingHandler)
+router.all('/anything/:anything', anythingHandler)
 
 router.get('/base64/:encoded', (req, res) => {
-  const encoded = req.params['encoded']
+  const encoded = req.params.encoded
   res.send(base64.decode(encoded))
 })
 
@@ -212,7 +215,7 @@ router.get('/brotli', (req, res, next) => {
 })
 
 router.all('/status/:code', (req, res) => {
-  const code = req.params['code']
+  const code = req.params.code
 
   const isValidCode = !!http.STATUS_CODES[code]
   if (!isValidCode) {
@@ -237,7 +240,7 @@ router.all('/response-headers', (req, res) => {
 })
 
 router.get(['/redirect/:n', '/relative-redirect/:n', '/absolute-redirect/:n'], (req, res) => {
-  const n = _.toInteger(req.params['n'])
+  const n = _.toInteger(req.params.n)
 
   if (!_.inRange(n, 1, 16)) {
     res.status(400).end('`n` should be a number in [1, 15]')
@@ -283,7 +286,7 @@ router.get('/cookies', (req, res) => {
 router.get('/cookies/set', (req, res) => {
   const query = req.ctx.query
 
-  for (let key in query) {
+  for (const key in query) {
     res.cookie(key, `${query[key]}`)
   }
 
@@ -293,7 +296,7 @@ router.get('/cookies/set', (req, res) => {
 router.get('/cookies/delete', (req, res) => {
   const query = req.ctx.query
 
-  for (let key in query) {
+  for (const key in query) {
     res.clearCookie(key)
   }
 
@@ -399,13 +402,13 @@ router.get('/html', (req, res) => {
   })
 })
 
-router.get('/links/:n/:offset?', (req, res) => {
-  let n = _.toInteger(req.params['n'])
+const linksHandler = (req, res) => {
+  let n = _.toInteger(req.params.n)
   if (!_.inRange(n, 0, 200)) {
     n = 10
   }
 
-  let offset = req.params['offset']
+  let offset = req.params.offset
   if (_.isUndefined(offset)) {
     res.redirect(`/links/${n}/0`)
     return
@@ -413,7 +416,7 @@ router.get('/links/:n/:offset?', (req, res) => {
 
   offset = _.toInteger(offset)
 
-  var result = []
+  const result = []
   for (let i = 0; i < n; i++) {
     if (i === offset) {
       result.push(`${i}`)
@@ -428,10 +431,13 @@ router.get('/links/:n/:offset?', (req, res) => {
     result.join(' '),
     '</body></html>'
   ].join(''))
-})
+}
+
+router.get('/links/:n', linksHandler)
+router.get('/links/:n/:offset', linksHandler)
 
 router.get('/etag/:etag', (req, res) => {
-  const etag = req.params['etag']
+  const etag = req.params.etag
 
   const ifMatch = req.header(constants.HTTPHeaderIfMatch)
   if (ifMatch) {
@@ -483,7 +489,7 @@ router.get('/cache', (req, res) => {
 })
 
 router.get('/cache/:value', (req, res) => {
-  const value = req.params['value']
+  const value = req.params.value
 
   const cacheControl = `public, max-age=${_.toInteger(value)}`
   res.setHeader(constants.HTTPHeaderCacheControl, cacheControl)
@@ -496,7 +502,7 @@ router.get('/cache/:value', (req, res) => {
 })
 
 router.get('/delay/:delay', (req, res) => {
-  let delay = _.toInteger(req.params['delay'])
+  let delay = _.toInteger(req.params.delay)
   delay = _.min([delay, 10])
 
   setTimeout(() => {
@@ -514,7 +520,7 @@ router.get('/delay/:delay', (req, res) => {
 })
 
 router.get('/stream/:n', (req, res) => {
-  const n = toInt(req.params['n'], {
+  const n = toInt(req.params.n, {
     min: 0,
     max: 100
   })
@@ -532,7 +538,7 @@ router.get('/stream/:n', (req, res) => {
 })
 
 router.get('/bytes/:n', (req, res) => {
-  const n = toInt(req.params['n'], {
+  const n = toInt(req.params.n, {
     min: 0,
     max: 100 * 1024 // set 100KB limit
   })
@@ -542,7 +548,7 @@ router.get('/bytes/:n', (req, res) => {
 })
 
 router.get('/stream-bytes/:n', (req, res) => {
-  const n = toInt(req.params['n'], {
+  const n = toInt(req.params.n, {
     min: 0,
     max: 100 * 1024 // set 100KB limit
   })

@@ -4,7 +4,7 @@ const app = require('app/app')
 
 describe('/headers', () => {
   it('ok', async function () {
-    let res = await request(app)
+    const res = await request(app)
       .get('/headers')
       .set({ k: 'v' })
     assert.equal(res.statusCode, 200)
@@ -14,7 +14,7 @@ describe('/headers', () => {
 
 describe('/response-headers', () => {
   it('ok', async function () {
-    let res = await request(app)
+    const res = await request(app)
       .get('/response-headers')
       .query({ k: 'v' })
     assert.equal(res.statusCode, 200)

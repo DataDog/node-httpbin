@@ -16,7 +16,7 @@
     "coveralls": "nyc report --reporter=text-lcov | coveralls"
   },
   "engines": {
-    "node": ">=6"
+    "node": ">=18"
   },
   "repository": {
     "type": "git",
@@ -36,32 +36,32 @@
     "accepts": "^1.3.8",
     "app-module-path": "^2.2.0",
     "basic-auth": "^2.0.1",
-    "body-parser": "^1.20.2",
+    "body-parser": "^2.2.1",
     "brotli": "^1.3.3",
-    "config": "^3.3.11",
-    "cookie-parser": "^1.4.6",
+    "config": "^4.1.1",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
-    "dd-trace": "^5.17.0",
-    "express": "^4.19.2",
+    "dd-trace": "^5.81.0",
+    "express": "^5.2.1",
     "express-partial-response": "^1.0.4",
     "express-prettify": "^0.1.2",
     "lodash": "^4.17.21",
-    "mime-types": "^2.1.35",
-    "multer": "^1.3.0",
-    "pino": "^8.19.0",
+    "mime-types": "^3.0.2",
+    "multer": "^2.0.2",
+    "pino": "^10.1.0",
     "request-ip": "^3.3.0",
     "spdy": "^4.0.2",
     "uuidv4": "^6.2.13"
   },
   "devDependencies": {
     "coveralls": "^3.1.1",
-    "mocha": "^10.4.0",
-    "nodemon": "^3.1.0",
-    "nyc": "^15.1.0",
+    "mocha": "^11.7.5",
+    "nodemon": "^3.1.11",
+    "nyc": "^17.1.0",
     "power-assert": "^1.6.1",
-    "prettier-standard": "^15.0.1",
-    "standard": "^17.1.0",
-    "supertest": "^6.3.4"
+    "prettier-standard": "^16.4.1",
+    "standard": "^17.1.2",
+    "supertest": "^7.1.4"
   },
   "standard": {
     "env": [
