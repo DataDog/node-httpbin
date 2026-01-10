@@ -21,4 +21,4 @@ COPY . /app
 ENV HTTPS_CERT_FILE='/certs/server.crt'
 ENV HTTPS_KEY_FILE='/certs/server.key'
 
-CMD npm start
+CMD ["npm", "start"]

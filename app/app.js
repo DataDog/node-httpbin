@@ -5,16 +5,17 @@ const path = require('path')
 require('app-module-path').addPath(path.resolve(__dirname, '..'))
 
 const express = require('express')
+const http2Express = require('http2-express-bridge')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const config = require('config')
 const https = require('https')
-const spdy = require('spdy')
+const http2 = require('http2')
 const fs = require('fs')
 const logger = require('app/logger')
 const partialResponse = require('express-partial-response')
 
-const app = express()
+const app = http2Express(express)
 
 // for x-forwarded-proto
 app.set('trust proxy', true)
@@ -55,45 +56,27 @@ if (process.env.HTTPS_KEY_FILE && process.env.HTTPS_CERT_FILE) {
   })
 }
 
-// HTTP2
+// HTTP2 plaintext (h2c)
+// allowHTTP1: true provides better Express compatibility while supporting HTTP/2
 const http2Options = {
-  spdy: {
-    protocol: 'h2',
-    plain: true,
-    // **optional**
-    // Parse first incoming X_FORWARDED_FOR frame and put it to the
-    // headers of every request.
-    // NOTE: Use with care! This should not be used without some proxy that
-    // will *always* send X_FORWARDED_FOR
-    'x-forwarded-for': true
-  }
+  allowHTTP1: true
 }
-const http2Server = spdy.createServer(http2Options, app)
+const http2Server = http2.createServer(http2Options, app)
 http2Server.listen(config.http2_port, () => {
   const address = http2Server.address()
-  logger.info(`listen ${address.address}:${address.port}`)
+  logger.info(`HTTP/2 plaintext listening on ${address.address}:${address.port}`)
 })
 
 if (process.env.HTTPS_KEY_FILE && process.env.HTTPS_CERT_FILE) {
   const http2TLSOptions = {
     key: fs.readFileSync(process.env.HTTPS_KEY_FILE),
     cert: fs.readFileSync(process.env.HTTPS_CERT_FILE),
-    spdy: {
-      protocols: ['h2'],
-      plain: false,
-      ssl: true,
-      // **optional**
-      // Parse first incoming X_FORWARDED_FOR frame and put it to the
-      // headers of every request.
-      // NOTE: Use with care! This should not be used without some proxy that
-      // will *always* send X_FORWARDED_FOR
-      'x-forwarded-for': true
-    }
+    allowHTTP1: true // Supports both HTTP/2 and HTTP/1.1 for better compatibility
   }
-  const http2TLSServer = spdy.createServer(http2TLSOptions, app)
+  const http2TLSServer = http2.createSecureServer(http2TLSOptions, app)
   http2TLSServer.listen(config.http2_tls_port, () => {
     const address = http2TLSServer.address()
-    logger.info(`listen ${address.address}:${address.port}`)
+    logger.info(`HTTP/2 TLS listening on ${address.address}:${address.port}`)
   })
 }
 

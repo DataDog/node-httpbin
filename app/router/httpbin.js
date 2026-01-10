@@ -6,7 +6,6 @@ const express = require('express')
 const router = express.Router()
 
 const _ = require('lodash')
-const brotli = require('brotli')
 const accepts = require('accepts')
 const mime = require('mime-types')
 const basicAuth = require('basic-auth')
@@ -197,7 +196,7 @@ router.get('/brotli', (req, res, next) => {
   res.removeHeader(constants.HTTPHeaderContentLength)
   res.setHeader(constants.HTTPHeaderContentType, mime.types.json)
 
-  brotli.compress(
+  zlib.brotliCompress(
     Buffer.from(JSON.stringify({
       brotli: true,
       headers: req.ctx.headers,
